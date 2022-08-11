@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@typedefs": ["typedefs"],
+      "@resolvers": ["resolvers"],
+    }
+  }
+}
