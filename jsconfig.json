@@ -4,6 +4,7 @@
     "paths": {
       "@typedefs": ["typedefs"],
       "@resolvers": ["resolvers"],
+      "@utils": ["utils"],
     }
   }
 }
