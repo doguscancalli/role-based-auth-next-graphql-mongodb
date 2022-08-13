@@ -5,6 +5,7 @@
       "@typedefs": ["typedefs"],
       "@resolvers": ["resolvers"],
       "@utils": ["utils"],
+      "@models": ["models"],
     }
   }
 }
