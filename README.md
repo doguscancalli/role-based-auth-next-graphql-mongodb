@@ -10,5 +10,6 @@
 - [x] Update user credentials
 - [x] Reset password
 - [x] Ban user
+- [ ] Email verification
 - [ ] UI
 
