@@ -37,10 +37,11 @@ const UserResolver = {
   },
   Mutation: {
     registerUser: async (_, args, context) => {
-      const {
+      let {
         input: { name, email, password },
       } = args
       {
+        email = email.toLowerCase()
         const { valid, errors } = validateRegisterRoute(name, email, password)
         if (!valid) throw new GraphQLYogaError(Object.values(errors))
         const user = await context.User.findOne({ email })
@@ -61,9 +62,10 @@ const UserResolver = {
       }
     },
     loginUser: async (_, args, context) => {
-      const {
+      let {
         input: { email, password },
       } = args
+      email = email.toLowerCase()
       const { errors, valid } = validateLoginRoute(email, password)
       if (!valid) throw new GraphQLYogaError(Object.values(errors))
       const user = await context.User.findOne({ email }).select('+password')
@@ -102,10 +104,11 @@ const UserResolver = {
       return true
     },
     updateUser: async (_, args, context) => {
-      const {
+      let {
         id,
         input: { name, email, role },
       } = args
+      email = email.toLowerCase()
       const { id: authUserId, role: authUserRole } = await context.isAuth(
         context
       )
@@ -135,7 +138,8 @@ const UserResolver = {
       return user
     },
     forgotPassword: async (_, args, context) => {
-      const { email } = args
+      let { email } = args
+      email = email.toLowerCase()
       const user = await context.User.findOne({ email })
       if (!user) throw new GraphQLYogaError('Kullanıcı bulunamadı')
       const resetToken = nanoid(64)
