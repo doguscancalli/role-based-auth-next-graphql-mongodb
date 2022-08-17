@@ -108,7 +108,7 @@ const UserResolver = {
         id,
         input: { name, email, role },
       } = args
-      email = email.toLowerCase()
+      email = email?.toLowerCase()
       const { id: authUserId, role: authUserRole } = await context.isAuth(
         context
       )
