@@ -15,11 +15,17 @@ const validateRegisterRoute = (name, email, password) => {
       errors.email = 'Geçerli bir eposta adresi giriniz'
     }
   }
+  if (email.length > 60) {
+    errors.name = 'Eposta 60 karakterden fazla olamaz'
+  }
   if (password === '') {
     errors.password = 'Şifre gereklidir'
   }
   if (password.length < 8) {
     errors.password = 'Şifreniz en az 8 karakter olmalıdır'
+  }
+  if (password.length > 30) {
+    errors.password = 'Şifreniz en fazla 30 karakter olmalıdır'
   }
   return {
     errors,
@@ -49,6 +55,9 @@ const validateResetPasswordRoute = (password) => {
   if (password.length < 8) {
     errors.password = 'Şifreniz en az 8 karakter olmalıdır'
   }
+  if (password.length > 30) {
+    errors.password = 'Şifreniz en fazla 30 karakter olmalıdır'
+  }
   return {
     errors,
     valid: Object.keys(errors).length < 1,
@@ -66,8 +75,14 @@ const validateUpdatePasswordRoute = (password, newPassword) => {
   if (password.length < 8) {
     errors.password = 'Şifreniz en az 8 karakter olmalıdır'
   }
+  if (password.length > 30) {
+    errors.password = 'Şifreniz en fazla 30 karakter olmalıdır'
+  }
   if (newPassword.length < 8) {
     errors.newPassword = 'Yeni şifreniz en az 8 karakter olmalıdır'
+  }
+  if (newPassword.length > 30) {
+    errors.password = 'Yeni şifreniz en fazla 30 karakter olmalıdır'
   }
   return {
     errors,
