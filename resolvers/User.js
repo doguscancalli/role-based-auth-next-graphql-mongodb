@@ -67,19 +67,18 @@ const UserResolver = {
       } = args
       email = email.toLowerCase()
       const { errors, valid } = validateLoginRoute(email, password)
+      console.log(errors)
       if (!valid) throw new GraphQLYogaError(Object.values(errors))
       const user = await context.User.findOne({ email }).select('+password')
       if (!user) {
-        errors.general = 'Kullanıcı bulunamadı'
-        throw new GraphQLYogaError(Object.values(errors))
+        throw new GraphQLYogaError('Kullanıcı bulunamadı')
       }
       if (user.bannedExp && user.bannedExp > new Date()) {
         throw new GraphQLYogaError('Hesabınız engellenmiştir')
       }
       const match = await bcrypt.compare(password, user.password)
       if (!match) {
-        errors.general = 'Kullanıcı bilgileri hatalı'
-        throw new GraphQLYogaError(Object.values(errors))
+        throw new GraphQLYogaError('Kullanıcı bilgileri hatalı')
       }
       const token = generateToken(user)
       return {
