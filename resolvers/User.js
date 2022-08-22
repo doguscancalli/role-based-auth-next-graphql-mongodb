@@ -73,12 +73,15 @@ const UserResolver = {
         throw new GraphQLYogaError('Kullanıcı bulunamadı')
       }
       if (user.banRecords.length > 0) {
-        console.log(user.banRecords)
         const banRecord = user.banRecords.find(
           (record) => record.expire > new Date()
         )
         if (banRecord) {
-          throw new GraphQLYogaError('Hesabınız engellenmiştir')
+          throw new GraphQLYogaError(
+            `Hesabınız ${banRecord.reason} nedeniyle ${new Date(
+              banRecord.expire
+            ).toLocaleString()} tarihine kadar engellenmiştir.`
+          )
         }
       }
       const match = await bcrypt.compare(password, user.password)

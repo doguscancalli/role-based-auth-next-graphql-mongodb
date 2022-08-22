@@ -26,12 +26,17 @@ const isAuth = async (context) => {
   }
   const dbUser = await context.User.findById(user.id)
   if (!dbUser) throw new GraphQLYogaError('Kullanıcı bulunamadı')
-  if (dbUser.bannedExp && dbUser.bannedExp > new Date()) {
-    throw new GraphQLYogaError(
-      `Hesabınız ${dbUser.bannedReason} nedeniyle ${new Date(
-        dbUser.bannedExp
-      ).toLocaleString()} tarihine kadar engellenmiştir.`
+  if (dbUser.banRecords.length > 0) {
+    const banRecord = dbUser.banRecords.find(
+      (record) => record.expire > new Date()
     )
+    if (banRecord) {
+      throw new GraphQLYogaError(
+        `Hesabınız ${banRecord.reason} nedeniyle ${new Date(
+          banRecord.expire
+        ).toLocaleString()} tarihine kadar engellenmiştir.`
+      )
+    }
   }
   return user
 }
