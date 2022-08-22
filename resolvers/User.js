@@ -67,14 +67,19 @@ const UserResolver = {
       } = args
       email = email.toLowerCase()
       const { errors, valid } = validateLoginRoute(email, password)
-      console.log(errors)
       if (!valid) throw new GraphQLYogaError(Object.values(errors))
       const user = await context.User.findOne({ email }).select('+password')
       if (!user) {
         throw new GraphQLYogaError('Kullanıcı bulunamadı')
       }
-      if (user.bannedExp && user.bannedExp > new Date()) {
-        throw new GraphQLYogaError('Hesabınız engellenmiştir')
+      if (user.banRecords.length > 0) {
+        console.log(user.banRecords)
+        const banRecord = user.banRecords.find(
+          (record) => record.expire > new Date()
+        )
+        if (banRecord) {
+          throw new GraphQLYogaError('Hesabınız engellenmiştir')
+        }
       }
       const match = await bcrypt.compare(password, user.password)
       if (!match) {
@@ -196,15 +201,17 @@ const UserResolver = {
     },
     banUser: async (_, args, context) => {
       const {
-        input: { id, bannedExp, bannedReason },
+        input: { id, expire, reason },
       } = args
       await context.isAuth(context)
       const { id: authUserId } = context.isAdmin(context)
       const user = await context.User.findById(id)
       if (!user) throw new GraphQLYogaError('Kullanıcı bulunamadı')
-      user.bannedExp = bannedExp
-      user.bannedReason = bannedReason
-      user.bannedBy = authUserId
+      user.banRecords.push({
+        by: authUserId,
+        expire,
+        reason,
+      })
       await user.save()
       return true
     },

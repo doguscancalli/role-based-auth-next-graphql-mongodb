@@ -11,9 +11,7 @@ const UserType = /* GraphQL */ `
     token: String
     resetPasswordToken: String
     resetPasswordExpire: Date
-    bannedExp: Date
-    bannedReason: String
-    bannedBy: String
+    banRecords: [BanRecord]
     createdAt: Date!
     updatedAt: Date!
   }
@@ -25,6 +23,11 @@ const UserType = /* GraphQL */ `
     page: Int
     prevPage: Int
     nextPage: Int
+  }
+  type BanRecord {
+    expire: Date!
+    reason: String!
+    by: String!
   }
 
   # Input
@@ -50,8 +53,8 @@ const UserType = /* GraphQL */ `
   }
   input BanUserInput {
     id: ID!
-    bannedExp: Date!
-    bannedReason: String!
+    expire: Date!
+    reason: String!
   }
 
   # Query

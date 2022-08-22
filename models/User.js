@@ -8,12 +8,16 @@ const UserSchema = new mongoose.Schema(
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpire: { type: Date, select: false },
-    bannedExp: { type: Date },
-    bannedReason: { type: String },
-    bannedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    banRecords: [
+      {
+        expire: { type: Date },
+        reason: { type: String },
+        by: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+      },
+    ],
   },
   {
     timestamps: true,
