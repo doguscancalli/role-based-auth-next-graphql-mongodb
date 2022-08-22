@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 import { GraphQLYogaError } from '@graphql-yoga/node'
-import sgMail from '@sendgrid/mail'
 import {
   advancedFiltering,
   generateToken,
@@ -9,6 +8,7 @@ import {
   validateLoginRoute,
   validateResetPasswordRoute,
   validateUpdatePasswordRoute,
+  sendMail,
 } from '@utils'
 
 const UserResolver = {
@@ -150,20 +150,9 @@ const UserResolver = {
       user.resetPasswordToken = resetToken
       user.resetPasswordExpire = Date.now() + 10 * 60 * 1000
       await user.save()
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY)
       const resetUrl = `${process.env.NEXT_PUBLIC_APP_BASE_URL}/sifre-sifirlama?token=${resetToken}`
       const text = `Bu epostayı, siz (veya bir başkası) şifrenizin sıfırlanmasını talep ettiği için alıyorsunuz. Şifrenizi sıfırlamak için bu linke gidin:\n\n${resetUrl}`
-      const data = {
-        to: email,
-        from: 'destek@mysandbox.com',
-        subject: 'Şifre Sıfırlama',
-        text,
-      }
-      try {
-        await sgMail.setApiKey(process.env.SENDGRID_API_KEY).send(data)
-      } catch (err) {
-        throw new GraphQLYogaError(err)
-      }
+      await sendMail(email, 'destek@mysandbox.com', 'Şifre Sıfırlama', text)
       return true
     },
     resetPassword: async (_, args, context) => {
