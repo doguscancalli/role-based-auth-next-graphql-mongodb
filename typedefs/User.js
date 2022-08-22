@@ -75,6 +75,7 @@ const UserType = /* GraphQL */ `
     resetPassword(token: String!, password: String!): Boolean!
     updatePassword(password: String!, newPassword: String!): Boolean!
     banUser(input: BanUserInput!): Boolean!
+    unbanUser(id: ID!): Boolean!
   }
 `
 

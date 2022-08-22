@@ -207,6 +207,22 @@ const UserResolver = {
       await user.save()
       return true
     },
+    unbanUser: async (_, args, context) => {
+      const { id } = args
+      await context.isAuth(context)
+      context.isAdmin(context)
+      const user = await context.User.findById(id)
+      if (!user) throw new GraphQLYogaError('Kullanıcı bulunamadı')
+      const banRecord = user.banRecords.find(
+        (record) => record.expire > Date.now()
+      )
+      if (!banRecord) throw new GraphQLYogaError('Engelleme kaydı bulunamadı')
+      user.banRecords = user.banRecords.filter(
+        (record) => record.expire < Date.now()
+      )
+      await user.save()
+      return true
+    },
   },
 }
 
